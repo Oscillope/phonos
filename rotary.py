@@ -1,6 +1,7 @@
 import threading
 try:
     import Adafruit_BBIO.GPIO as GPIO
+    emulator = False
 except ImportError:
     emulator = True
 from time import sleep
@@ -25,7 +26,7 @@ class Rotary (threading.Thread):
     def run(self):
         while (not self.stop_thread):
             if emulator:
-                num = input("Enter a number, or q")
+                num = input("Enter a number, or q: ")
                 if (num == 'q'):
                     self.stop_thread = True
                 else:
