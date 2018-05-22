@@ -4,7 +4,7 @@ import time
 
 try:
     import config as cfg
-except ModuleNotFoundError:
+except ImportError:
     import sys
     print("You need a config.py!")
     sys.exit(-1)

@@ -1,7 +1,7 @@
 import threading
 try:
     import Adafruit_BBIO.GPIO as GPIO
-except ModuleNotFoundError:
+except ImportError:
     emulator = True
 from time import sleep
 import signal
