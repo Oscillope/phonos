@@ -13,12 +13,12 @@ zp = soco.discovery.any_soco()
 coord = zp.group.coordinator
 
 def cb(value):
-    coord.partymode()
     if value == 10:
         print("Pause!")
         coord.pause()
     else:
-        coord.play_uri(cfg.uris[value])
+        coord.partymode()
+        coord.play_uri(cfg.uris[value - 1])
 
 # These are BeagleBoard-formatted pins.
 phone = rotary.Rotary("P8_9", "P8_10", cb)
