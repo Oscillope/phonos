@@ -1,9 +1,18 @@
 import threading
+# Is nesting try statements bad? My brain says yes, but my heart says no.
+# This will figure out if we're on a Raspberry Pi, a Beaglebone, or neither.
 try:
-    import Adafruit_BBIO.GPIO as GPIO
+    import RPi.GPIO as GPIO
+    rpi = True
     emulator = False
 except ImportError:
-    emulator = True
+    try:
+        import Adafruit_BBIO.GPIO as GPIO
+        rpi = False
+        emulator = False
+    except ImportError:
+        rpi = False
+        emulator = True
 from time import sleep
 import signal
 
@@ -12,6 +21,8 @@ class Rotary (threading.Thread):
         threading.Thread.__init__(self)
         self.latch = latch
         self.count = count
+        if rpi:
+            GPIO.setmode(GPIO.board)
         if not emulator:
             GPIO.setup(self.latch, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.setup(self.count, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -48,3 +59,5 @@ class Rotary (threading.Thread):
     def sig_handler(self, signal, frame):
         print("Caught ctrl-C, exiting...")
         self.stop_thread = True
+        if rpi:
+            GPIO.cleanup()

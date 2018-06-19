@@ -20,8 +20,8 @@ def cb(value):
         coord.partymode()
         coord.play_uri(cfg.uris[value - 1])
 
-# These are BeagleBoard-formatted pins.
-phone = rotary.Rotary("P8_9", "P8_10", cb)
+# These should be strings on BeagleBoard, but numbers on RPi
+phone = rotary.Rotary(16, 18, cb)
 
 phone.start()
 
