@@ -13,7 +13,7 @@ zp = soco.discovery.any_soco()
 coord = zp.group.coordinator
 
 def cb(value):
-    if value == 10:
+    if value >= 10:
         print("Pause!")
         coord.pause()
     else:
