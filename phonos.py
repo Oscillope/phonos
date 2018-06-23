@@ -18,7 +18,10 @@ def cb(value):
         coord.pause()
     else:
         coord.partymode()
-        coord.play_uri(cfg.uris[value - 1])
+        try:
+            coord.play_uri(cfg.uris[value - 1])
+        except IndexError:
+            print(str(value) + "out of range")
 
 # These are BeagleBoard-formatted pins.
 phone = rotary.Rotary("P8_9", "P8_10", cb)
