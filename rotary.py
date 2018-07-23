@@ -22,10 +22,12 @@ class Rotary (threading.Thread):
         self.latch = latch
         self.count = count
         if rpi:
-            GPIO.setmode(GPIO.board)
+            GPIO.setmode(GPIO.BOARD)
         if not emulator:
             GPIO.setup(self.latch, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.setup(self.count, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+            if rpi:
+                GPIO.add_event_detect(self.count, GPIO.RISING, bouncetime=50)
         else:
             print("Rotary module in emulator mode")
         self._counter = 0
@@ -44,7 +46,8 @@ class Rotary (threading.Thread):
                     self._counter = int(num)
             else:
                 while (GPIO.input(self.latch) == 0):
-                    if (GPIO.input(self.count) == 1):
+                    #if (GPIO.input(self.count) == 1):
+                    if (GPIO.event_detected(self.count)):
                         self._counter += 1
                         while (GPIO.input(self.count) == 1):
                             pass # wait for it to go low

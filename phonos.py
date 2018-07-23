@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import rotary
 import soco
 import time
@@ -13,7 +14,8 @@ zp = soco.discovery.any_soco()
 coord = zp.group.coordinator
 
 def cb(value):
-    if value == 10:
+    print(value)
+    if value >= 10:
         print("Pause!")
         coord.pause()
     else:
@@ -21,7 +23,7 @@ def cb(value):
         coord.play_uri(cfg.uris[value - 1])
 
 # These should be strings on BeagleBoard, but numbers on RPi
-phone = rotary.Rotary(16, 18, cb)
+phone = rotary.Rotary(18, 16, cb)
 
 phone.start()
 
