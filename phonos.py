@@ -37,8 +37,16 @@ def cb(value):
             try:
                 zp.play_uri(cfg.uris[value - 1])
                 print("Playing")
+                state = "volume"
             except IndexError:
                 print("Invalid music selection")
+    elif (state == "volume"):
+        zp.volume = value * 10
+        print("Volume: " + str(value * 10))
+        state = "music"
+    else:
+        print("Invalid state")
+        state = "zone"
 
 # These should be strings on BeagleBoard, but numbers on RPi
 phone = rotary.Rotary(18, 16, cb)
