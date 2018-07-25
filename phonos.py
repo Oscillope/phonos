@@ -1,4 +1,3 @@
-#!/usr/bin/python
 import rotary
 import soco
 import time
