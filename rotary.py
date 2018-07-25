@@ -3,16 +3,9 @@ import threading
 # This will figure out if we're on a Raspberry Pi, a Beaglebone, or neither.
 try:
     import RPi.GPIO as GPIO
-    rpi = True
     emulator = False
 except ImportError:
-    try:
-        import Adafruit_BBIO.GPIO as GPIO
-        rpi = False
-        emulator = False
-    except ImportError:
-        rpi = False
-        emulator = True
+    emulator = True
 from time import sleep
 import signal
 
@@ -21,13 +14,11 @@ class Rotary (threading.Thread):
         threading.Thread.__init__(self)
         self.latch = latch
         self.count = count
-        if rpi:
-            GPIO.setmode(GPIO.BOARD)
+        GPIO.setmode(GPIO.BOARD)
         if not emulator:
             GPIO.setup(self.latch, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.setup(self.count, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-            if rpi:
-                GPIO.add_event_detect(self.count, GPIO.RISING, bouncetime=50)
+            GPIO.add_event_detect(self.count, GPIO.RISING, bouncetime=50)
         else:
             print("Rotary module in emulator mode")
         self._counter = 0
@@ -62,5 +53,4 @@ class Rotary (threading.Thread):
     def sig_handler(self, signal, frame):
         print("Caught SIGINT, exiting...")
         self.stop_thread = True
-        if rpi:
-            GPIO.cleanup()
+        GPIO.cleanup()

@@ -49,7 +49,6 @@ def cb(value):
         print("Invalid state")
         state = "zone"
 
-# These should be strings on BeagleBoard, but numbers on RPi
 phone = rotary.Rotary(18, 16, cb)
 
 phone.start()
