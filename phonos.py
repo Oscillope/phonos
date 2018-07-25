@@ -29,27 +29,36 @@ def cb(value):
                 return
         print("Invalid zone selection")
     elif (state == "music"):
-        if value >= 10:
-            print("Pause!")
-            zp.pause()
-            state = "zone"
-        else:
-            try:
-                zp.play_uri(cfg.uris[value - 1])
-                print("Playing")
-                state = "volume"
-            except IndexError:
-                print("Invalid music selection")
+        try:
+            zp.play_uri(cfg.uris[value - 1])
+            print("Playing")
+            state = "volume"
+        except IndexError:
+            print("Invalid music selection")
     elif (state == "volume"):
+        if (value >= 10):
+            state = "music"
+            return
         for member in zp.group:
             member.volume = value * 10
         print("Volume: " + str(value * 10))
-        state = "music"
     else:
         print("Invalid state")
         state = "zone"
 
-phone = rotary.Rotary(18, 16, cb)
+def hook_cb(value):
+    global state
+    global zp
+    if (value):
+        zp.play()
+        state = "volume"
+        print("Play, go to volume state")
+    else:
+        zp.pause()
+        state = "zone"
+        print("Pause, reset state")
+
+phone = rotary.Rotary(18, 16, 22, cb, hook_cb)
 
 phone.start()
 
