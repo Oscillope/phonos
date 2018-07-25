@@ -60,7 +60,7 @@ class Rotary (threading.Thread):
         print("Exiting rotary phone thread")
 
     def sig_handler(self, signal, frame):
-        print("Caught ctrl-C, exiting...")
+        print("Caught SIGINT, exiting...")
         self.stop_thread = True
         if rpi:
             GPIO.cleanup()
