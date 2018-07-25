@@ -30,8 +30,8 @@ def cb(value):
         print("Invalid zone selection")
     elif (state == "music"):
         try:
-            zp.play_uri(cfg.uris[value - 1])
-            print("Playing")
+            zp.play_uri(cfg.uris[value - 1].uri)
+            print("Playing " + cfg.uris[value - 1].name)
             state = "volume"
         except IndexError:
             print("Invalid music selection")
@@ -61,5 +61,12 @@ def hook_cb(value):
 phone = rotary.Rotary(18, 16, 22, cb, hook_cb)
 
 phone.start()
+
+print("Phonos ready. Rooms:")
+for i, zone in enumerate(soco.discovery.discover()):
+    print(str(i) + ": " + zone.player_name)
+print("\nPresets:")
+for i, preset in enumerate(cfg.uris):
+    print(str(i) + ": " + preset.name)
 
 phone.join()
