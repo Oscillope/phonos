@@ -41,7 +41,8 @@ def cb(value):
             except IndexError:
                 print("Invalid music selection")
     elif (state == "volume"):
-        zp.volume = value * 10
+        for member in zp.group:
+            member.volume = value * 10
         print("Volume: " + str(value * 10))
         state = "music"
     else:
