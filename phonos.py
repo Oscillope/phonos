@@ -11,35 +11,33 @@ except ImportError:
 
 state = "zone"
 zp = soco.discovery.any_soco()
+zones = list(zp.visible_zones)
 
 def cb(value):
     global state
     global zp
     if (state == "zone"):
         if (value >= 10):
+            zp = None
+            print("Reset GM")
+        elif (value == 9):
             zp.partymode()
-        elif isinstance(cfg.rooms[value - 1], tuple):
+        elif zp:
             try:
-                zp = None
-                for name in cfg.rooms[value - 1]:
-                    zone = soco.discovery.by_name(name)
-                    zone.unjoin()
-                    if zp:
-                        zone.join(zp)
-                    print("Joining " + name)
-                    zp = zone.group.coordinator
+                zone = zones[value - 1]
+                if zone is zp:
+                    return
+                zone.join(zp)
+                print("GM: " + zone.player_name)
             except IndexError:
                 print("Invalid zone selection")
-                return
         else:
             try:
-                zp = soco.discovery.by_name(cfg.rooms[value - 1])
+                zp = zones[value - 1]
                 zp.unjoin()
-                print("Selected " + cfg.rooms[value - 1])
+                print("GC: " + zp.player_name)
             except IndexError:
                 print("Invalid zone selection")
-                return
-        state = "music"
     elif (state == "music"):
         try:
             zp.play_uri(cfg.uris[value - 1].uri)
@@ -66,8 +64,8 @@ def hook_cb(value):
             zp.play()
         except soco.exceptions.SoCoUPnPException:
             pass
-        state = "volume"
-        print("Play, go to volume state")
+        state = "music"
+        print("Group selected, pick some music")
     else:
         try:
             zp.pause()
@@ -81,10 +79,12 @@ phone = rotary.Rotary(18, 16, 22, cb, hook_cb)
 phone.start()
 
 print("Phonos ready. Zones:")
-for i, zone in enumerate(cfg.rooms):
-    print(str(i+1) + ": " + str(zone))
+for i, zone in enumerate(zp.visible_zones):
+    print(str(i+1) + ": " + zone.player_name)
 print("\nPresets:")
 for i, preset in enumerate(cfg.uris):
     print(str(i+1) + ": " + preset.name)
+
+zp = None
 
 phone.join()
