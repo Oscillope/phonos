@@ -1,13 +1,11 @@
 import threading
-# Is nesting try statements bad? My brain says yes, but my heart says no.
-# This will figure out if we're on a Raspberry Pi, a Beaglebone, or neither.
+from time import sleep
+import signal
 try:
     import RPi.GPIO as GPIO
     emulator = False
 except ImportError:
     emulator = True
-from time import sleep
-import signal
 
 class Rotary (threading.Thread):
     def __init__(self, latch, count, hook, cb = None, hook_cb = None):
@@ -20,7 +18,7 @@ class Rotary (threading.Thread):
             GPIO.setup(self.latch, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.setup(self.count, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.setup(self.hook, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-            GPIO.add_event_detect(self.count, GPIO.RISING, bouncetime=50)
+            GPIO.add_event_detect(self.count, GPIO.RISING, bouncetime=80)
             if hook_cb:
                 GPIO.add_event_detect(self.hook, GPIO.BOTH, callback=self._hook_cb, bouncetime=500)
                 self.hook_cb = hook_cb
@@ -46,7 +44,6 @@ class Rotary (threading.Thread):
                     self._counter = int(num)
             else:
                 while (GPIO.input(self.latch) == 0):
-                    #if (GPIO.input(self.count) == 1):
                     if (GPIO.event_detected(self.count)):
                         self._counter += 1
                         while (GPIO.input(self.count) == 1):
