@@ -20,14 +20,20 @@ def cb(value):
             zp.partymode()
             state = "music"
             return
-        for i, zone in enumerate(soco.discovery.discover()):
-            if (i == value - 1):
+        try:
+            zp = None
+            for name in cfg.rooms[value - 1]:
+                zone = soco.discovery.by_name(name)
+                if zp:
+                    zone.join(zp)
+                else:
+                    zone.unjoin()
+                print("Joining " + name)
                 zp = zone
-                zp.unjoin()
-                print("Room: " + zp.player_name)
-                state = "music"
-                return
-        print("Invalid zone selection")
+            zp = zp.group.coordinator
+            state = "music"
+        except IndexError:
+            print("Invalid zone selection")
     elif (state == "music"):
         try:
             zp.play_uri(cfg.uris[value - 1].uri)
@@ -68,11 +74,11 @@ phone = rotary.Rotary(18, 16, 22, cb, hook_cb)
 
 phone.start()
 
-print("Phonos ready. Rooms:")
-for i, zone in enumerate(soco.discovery.discover()):
-    print(str(i) + ": " + zone.player_name)
+print("Phonos ready. Zones:")
+for i, zone in enumerate(cfg.rooms):
+    print(str(i+1) + ": " + str(zone))
 print("\nPresets:")
 for i, preset in enumerate(cfg.uris):
-    print(str(i) + ": " + preset.name)
+    print(str(i+1) + ": " + preset.name)
 
 phone.join()
