@@ -50,11 +50,17 @@ def hook_cb(value):
     global state
     global zp
     if (value):
-        zp.play()
+        try:
+            zp.play()
+        except soco.exceptions.SoCoUPnPException:
+            pass
         state = "volume"
         print("Play, go to volume state")
     else:
-        zp.pause()
+        try:
+            zp.pause()
+        except soco.exceptions.SoCoUPnPException:
+            pass
         state = "zone"
         print("Pause, reset state")
 
