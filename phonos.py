@@ -24,13 +24,11 @@ def cb(value):
             zp = None
             for name in cfg.rooms[value - 1]:
                 zone = soco.discovery.by_name(name)
+                zone.unjoin()
                 if zp:
                     zone.join(zp)
-                else:
-                    zone.unjoin()
                 print("Joining " + name)
-                zp = zone
-            zp = zp.group.coordinator
+                zp = zone.group.coordinator
             state = "music"
         except IndexError:
             print("Invalid zone selection")
