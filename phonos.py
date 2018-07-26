@@ -18,20 +18,28 @@ def cb(value):
     if (state == "zone"):
         if (value >= 10):
             zp.partymode()
-            state = "music"
-            return
-        try:
-            zp = None
-            for name in cfg.rooms[value - 1]:
-                zone = soco.discovery.by_name(name)
-                zone.unjoin()
-                if zp:
-                    zone.join(zp)
-                print("Joining " + name)
-                zp = zone.group.coordinator
-            state = "music"
-        except IndexError:
-            print("Invalid zone selection")
+        elif isinstance(cfg.rooms[value - 1], tuple):
+            try:
+                zp = None
+                for name in cfg.rooms[value - 1]:
+                    zone = soco.discovery.by_name(name)
+                    zone.unjoin()
+                    if zp:
+                        zone.join(zp)
+                    print("Joining " + name)
+                    zp = zone.group.coordinator
+            except IndexError:
+                print("Invalid zone selection")
+                return
+        else:
+            try:
+                zp = soco.discovery.by_name(cfg.rooms[value - 1])
+                zp.unjoin()
+                print("Selected " + cfg.rooms[value - 1])
+            except IndexError:
+                print("Invalid zone selection")
+                return
+        state = "music"
     elif (state == "music"):
         try:
             zp.play_uri(cfg.uris[value - 1].uri)
