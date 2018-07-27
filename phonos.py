@@ -18,27 +18,22 @@ def cb(value):
     if (state == "zone"):
         if (value >= 10):
             zp.partymode()
+        elif (value > len(cfg.rooms)):
+            print("Invalid zone selection " + str(value))
+            return
         elif isinstance(cfg.rooms[value - 1], tuple):
-            try:
-                zp = None
-                for name in cfg.rooms[value - 1]:
-                    zone = soco.discovery.by_name(name)
-                    zone.unjoin()
-                    if zp:
-                        zone.join(zp)
-                    print("Joining " + name)
-                    zp = zone.group.coordinator
-            except IndexError:
-                print("Invalid zone selection")
-                return
+            zp = None
+            for name in cfg.rooms[value - 1]:
+                zone = soco.discovery.by_name(name)
+                zone.unjoin()
+                if zp:
+                    zone.join(zp)
+                print("Joining " + name)
+                zp = zone.group.coordinator
         else:
-            try:
-                zp = soco.discovery.by_name(cfg.rooms[value - 1])
-                zp.unjoin()
-                print("Selected " + cfg.rooms[value - 1])
-            except IndexError:
-                print("Invalid zone selection")
-                return
+            zp = soco.discovery.by_name(cfg.rooms[value - 1])
+            zp.unjoin()
+            print("Selected " + cfg.rooms[value - 1])
         state = "music"
     elif (state == "music"):
         try:
@@ -46,7 +41,7 @@ def cb(value):
             print("Playing " + cfg.uris[value - 1].name)
             state = "volume"
         except IndexError:
-            print("Invalid music selection")
+            print("Invalid music selection " + str(value))
     elif (state == "volume"):
         if (value >= 10):
             state = "music"
