@@ -12,6 +12,12 @@ except ImportError:
 state = "zone"
 zp = soco.discovery.any_soco()
 
+# This is how we transition through the various states:
+# Zone -> <zone select> -> Music -> <music select> -> Volume
+# Any -> <handset up> -> Volume
+# Any -> <handset down> -> Zone
+# Volume -> <dial 0> -> Music
+
 def cb(value):
     global state
     global zp
@@ -63,6 +69,8 @@ def hook_cb(value):
             pass
         state = "volume"
         print("Play, go to volume state")
+    elif (state == "zone"):
+        pass
     else:
         try:
             zp.pause()
