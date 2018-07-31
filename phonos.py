@@ -12,6 +12,7 @@ except ImportError:
 state = "zone"
 zp = soco.discovery.any_soco()
 zones = list(zp.visible_zones)
+zp = None
 
 # This is how we transition through the various states:
 # Zone -> <zone select> -> <handset up> -> Music -> <music select> -> Volume
@@ -87,12 +88,10 @@ phone = rotary.Rotary(18, 16, 22, cb, hook_cb)
 phone.start()
 
 print("Phonos ready. Zones:")
-for i, zone in enumerate(zp.visible_zones):
+for i, zone in enumerate(zones):
     print(str(i+1) + ": " + zone.player_name)
 print("\nPresets:")
 for i, preset in enumerate(cfg.uris):
     print(str(i+1) + ": " + preset.name)
-
-zp = None
 
 phone.join()
