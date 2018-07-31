@@ -13,6 +13,12 @@ state = "zone"
 zp = soco.discovery.any_soco()
 zones = list(zp.visible_zones)
 
+# This is how we transition through the various states:
+# Zone -> <zone select> -> Music -> <music select> -> Volume
+# Any -> <handset up> -> Volume
+# Any -> <handset down> -> Zone
+# Volume -> <dial 0> -> Music
+
 def cb(value):
     global state
     global zp
@@ -44,7 +50,7 @@ def cb(value):
             print("Playing " + cfg.uris[value - 1].name)
             state = "volume"
         except IndexError:
-            print("Invalid music selection")
+            print("Invalid music selection " + str(value))
     elif (state == "volume"):
         if (value >= 10):
             state = "music"
@@ -66,6 +72,8 @@ def hook_cb(value):
             pass
         state = "music"
         print("Group selected, pick some music")
+    elif (state == "zone"):
+        pass
     else:
         try:
             zp.pause()
