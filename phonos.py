@@ -10,9 +10,8 @@ except ImportError:
     sys.exit(-1)
 
 state = "zone"
-zp = soco.discovery.any_soco()
-zones = list(zp.visible_zones)
 zp = None
+zones = list(soco.discovery.discover())
 
 # This is how we transition through the various states:
 # Zone -> <zone select> -> <handset up> -> Music -> <music select> -> Volume
