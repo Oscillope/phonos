@@ -14,8 +14,8 @@ zp = soco.discovery.any_soco()
 zones = list(zp.visible_zones)
 
 # This is how we transition through the various states:
-# Zone -> <zone select> -> Music -> <music select> -> Volume
-# Any -> <handset up> -> Volume
+# Zone -> <zone select> -> <handset up> -> Music -> <music select> -> Volume
+# Zone -> <handset up> -> Music
 # Any -> <handset down> -> Zone
 # Volume -> <dial 0> -> Music
 
