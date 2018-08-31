@@ -86,7 +86,7 @@ def hook_cb(value):
         state = "zone"
         print("Pause, reset state")
 
-def sig_handler(self, signal, frame):
+def sig_handler(signal, frame):
     print("Caught SIGINT, exiting...")
     phone.stop()
     phone.join()
