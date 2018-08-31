@@ -130,7 +130,7 @@ class Leds (threading.Thread):
                     blue = int(color[2] * tail)
                     self.strip.setPixelColorRGB(i, red, green, blue)
                 self.strip.show()
-                sleep(0.01)
+                sleep(0.005)
                 if not self.running: return
             for j in range(128, 0, -1):
                 for i in range(self.strip.numPixels()):
@@ -140,7 +140,7 @@ class Leds (threading.Thread):
                     blue = int(color[2] * tail)
                     self.strip.setPixelColorRGB(i, red, green, blue)
                 self.strip.show()
-                sleep(0.01)
+                sleep(0.007)
                 if not self.running: return
 
     def statePlay(self, color):
