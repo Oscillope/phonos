@@ -94,7 +94,7 @@ def hook_cb(value):
 
 def sig_handler(signal, frame):
     print("Caught SIGINT, exiting...")
-    phone.stop()
+    phone.stop_thread = True
     phone.join()
     lights.kill()
     lights.join()

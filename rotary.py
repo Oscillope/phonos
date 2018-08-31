@@ -53,14 +53,11 @@ class Rotary (threading.Thread):
                 self._counter = 0
             sleep(0.1)
         print("Exiting rotary phone thread")
+        GPIO.cleanup()
 
     def _hook_cb(self, pin):
         if (GPIO.input(pin)):
             self.hook_cb(True)
         else:
             self.hook_cb(False)
-
-    def stop(self):
-        self.stop_thread = True
-        GPIO.cleanup()
 

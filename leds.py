@@ -77,6 +77,7 @@ class Leds (threading.Thread):
             self.cond.wait()
             self.__states[self.state](self.color)
             self.cond.release()
+        print("Exiting LED thread")
 
     def kill(self):
         self.running = False
