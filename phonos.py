@@ -30,7 +30,7 @@ def cb(value):
             zp.partymode()
         elif (value > len(cfg.rooms)):
             print("Invalid zone selection " + str(value))
-            lights.startOff()
+            lights.startErr()
             return
         elif isinstance(cfg.rooms[value - 1], tuple):
             zp = None
@@ -55,6 +55,7 @@ def cb(value):
             lights.startPlay((0, 200, 255))
         except IndexError:
             print("Invalid music selection " + str(value))
+            lights.startErr()
     elif (state == "volume"):
         if (value >= 10):
             state = "music"
@@ -64,6 +65,7 @@ def cb(value):
         print("Volume: " + str(value * 10))
     else:
         print("Invalid state")
+        lights.startErr()
         state = "zone"
 
 def hook_cb(value):
@@ -84,12 +86,10 @@ def hook_cb(value):
             return # Avoid double-pause
         try:
             zp.pause()
-            lights.stop()
+            lights.startOff()
         except soco.exceptions.SoCoUPnPException:
             pass
         state = "zone"
-        t = Timer(2, lights.startOff)
-        t.start()
         print("Pause, reset state")
 
 def sig_handler(signal, frame):

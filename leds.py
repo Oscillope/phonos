@@ -67,6 +67,7 @@ class Leds (threading.Thread):
             "off" : self.stateOff,
             "waiting" : self.stateWait,
             "playing" : self.statePlay,
+            "error" : self.stateErr,
         }
         self.strip.begin()
 
@@ -87,31 +88,31 @@ class Leds (threading.Thread):
     def stop(self):
         self.running = False
 
-    def startWait(self, color):
+    def manageState(self):
         self.running = False
         self.cond.acquire()
         self.running = True
+        self.cond.notifyAll()
+        self.cond.release()
+
+    def startWait(self, color):
         self.color = color
         self.state = "waiting"
-        self.cond.notifyAll()
-        self.cond.release()
-
+        self.manageState()
 
     def startPlay(self, color):
-        self.running = False
-        self.cond.acquire()
-        self.running = True
         self.color = color
         self.state = "playing"
-        self.cond.notifyAll()
-        self.cond.release()
+        self.manageState()
 
     def startOff(self):
-        self.running = False
-        self.cond.acquire()
         self.state = "off"
-        self.cond.notifyAll()
-        self.cond.release()
+        self.manageState()
+        self.running = False
+
+    def startErr(self):
+        self.state = "error"
+        self.manageState()
 
     def stateOff(self, color):
         for i in range(self.strip.numPixels()):
@@ -152,3 +153,13 @@ class Leds (threading.Thread):
             step = (step + 1) % self.strip.numPixels()
             self.strip.show()
             sleep(0.5)
+
+    def stateErr(self, color):
+        for j in range(8):
+            for i in range(self.strip.numPixels()):
+                if not (j % 2):
+                    self.strip.setPixelColorRGB(i, 255, 0, 0)
+                else:
+                    self.strip.setPixelColorRGB(i, 0, 0, 0)
+            self.strip.show()
+            sleep(0.3)
