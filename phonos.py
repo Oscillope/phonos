@@ -3,6 +3,7 @@ import soco
 import time
 import leds
 import signal
+from threading import Timer
 
 try:
     import config as cfg
@@ -24,10 +25,12 @@ def cb(value):
     global state
     global zp
     if (state == "zone"):
+        lights.startWait((255, 133, 0))
         if (value >= 10):
             zp.partymode()
         elif (value > len(cfg.rooms)):
             print("Invalid zone selection " + str(value))
+            lights.startOff()
             return
         elif isinstance(cfg.rooms[value - 1], tuple):
             zp = None
@@ -43,6 +46,7 @@ def cb(value):
             zp.unjoin()
             print("Selected " + cfg.rooms[value - 1])
         state = "music"
+        lights.startWait((0, 255, 100))
     elif (state == "music"):
         try:
             zp.play_uri(cfg.uris[value - 1].uri)
@@ -80,17 +84,19 @@ def hook_cb(value):
             return # Avoid double-pause
         try:
             zp.pause()
-            lights.stopPlay()
+            lights.stop()
         except soco.exceptions.SoCoUPnPException:
             pass
         state = "zone"
+        t = Timer(2, lights.startOff)
+        t.start()
         print("Pause, reset state")
 
 def sig_handler(signal, frame):
     print("Caught SIGINT, exiting...")
     phone.stop()
     phone.join()
-    lights.stop()
+    lights.kill()
     lights.join()
 
 phone = rotary.Rotary(18, 16, 22, cb, hook_cb)

@@ -77,52 +77,69 @@ class Leds (threading.Thread):
             self.__states[self.state](self.color)
             self.cond.release()
 
-    def stop(self):
+    def kill(self):
         self.running = False
         self.stop_thread = True
         self.cond.acquire()
         self.cond.notifyAll()
         self.cond.release()
 
+    def stop(self):
+        self.running = False
+
     def startWait(self, color):
-        self.running = True
+        self.running = False
         self.cond.acquire()
+        self.running = True
         self.color = color
         self.state = "waiting"
         self.cond.notifyAll()
         self.cond.release()
 
-    def stopWait(self):
-        self.running = False
 
     def startPlay(self, color):
-        self.running = True
+        self.running = False
         self.cond.acquire()
+        self.running = True
         self.color = color
         self.state = "playing"
         self.cond.notifyAll()
         self.cond.release()
 
-    def stopPlay(self):
+    def startOff(self):
         self.running = False
+        self.cond.acquire()
+        self.state = "off"
+        self.cond.notifyAll()
+        self.cond.release()
 
     def stateOff(self, color):
-        for i in range(strip.numPixels()):
+        for i in range(self.strip.numPixels()):
             self.strip.setPixelColorRGB(i, 0, 0, 0)
         self.strip.show()
 
     def stateWait(self, color):
         while self.running:
-            for j in range(self.strip.numPixels() + 3):
+            for j in range(128):
                 for i in range(self.strip.numPixels()):
-                    tail = 1 / (j - i)
+                    tail = j / 128
                     red = int(color[0] * tail)
                     green = int(color[1] * tail)
                     blue = int(color[2] * tail)
-                    print("rgb {:d}{:d}{:d}", red, green, blue)
                     self.strip.setPixelColorRGB(i, red, green, blue)
                 self.strip.show()
-                sleep(0.3)
+                sleep(0.01)
+                if not self.running: return
+            for j in range(128, 0, -1):
+                for i in range(self.strip.numPixels()):
+                    tail = j / 128
+                    red = int(color[0] * tail)
+                    green = int(color[1] * tail)
+                    blue = int(color[2] * tail)
+                    self.strip.setPixelColorRGB(i, red, green, blue)
+                self.strip.show()
+                sleep(0.01)
+                if not self.running: return
 
     def statePlay(self, color):
         step = 0
