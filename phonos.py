@@ -52,7 +52,7 @@ def cb(value):
             zp.play_uri(cfg.uris[value - 1].uri)
             print("Playing " + cfg.uris[value - 1].name)
             state = "volume"
-            lights.startPlay((0, 200, 255))
+            lights.startPlay((0, 148, 255))
         except IndexError:
             print("Invalid music selection " + str(value))
             lights.startErr()

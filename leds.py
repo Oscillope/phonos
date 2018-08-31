@@ -145,7 +145,7 @@ class Leds (threading.Thread):
     def statePlay(self, color):
         step = 0
         while self.running:
-            for i in range(self.strip.numPixels()):
+            for i in range(self.strip.numPixels(), 0, -1):
                 if (i == step):
                     self.strip.setPixelColorRGB(i, color[0], color[1], color[2])
                 else:
