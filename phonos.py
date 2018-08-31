@@ -59,6 +59,7 @@ def cb(value):
     elif (state == "volume"):
         if (value >= 10):
             state = "music"
+            lights.startWait((0, 255, 100))
             return
         for member in zp.group:
             member.volume = value * 10
