@@ -1,6 +1,7 @@
 import rotary
 import soco
 import time
+import leds
 
 try:
     import config as cfg
@@ -46,6 +47,7 @@ def cb(value):
             zp.play_uri(cfg.uris[value - 1].uri)
             print("Playing " + cfg.uris[value - 1].name)
             state = "volume"
+            lights.startPlay((0, 200, 255))
         except IndexError:
             print("Invalid music selection " + str(value))
     elif (state == "volume"):
@@ -67,6 +69,7 @@ def hook_cb(value):
             return # Avoid double-play
         try:
             zp.play()
+            lights.startPlay((0, 200, 255))
         except soco.exceptions.SoCoUPnPException:
             pass
         state = "volume"
@@ -76,14 +79,25 @@ def hook_cb(value):
             return # Avoid double-pause
         try:
             zp.pause()
+            lights.stopPlay()
         except soco.exceptions.SoCoUPnPException:
             pass
         state = "zone"
         print("Pause, reset state")
 
-phone = rotary.Rotary(18, 16, 22, cb, hook_cb)
+def sig_handler(self, signal, frame):
+    print("Caught SIGINT, exiting...")
+    phone.stop()
+    phone.join()
+    lights.stop()
+    lights.join()
 
+phone = rotary.Rotary(18, 16, 22, cb, hook_cb)
+lights = leds.Leds(18, 5)
+
+signal.signal(signal.SIGINT, sig_handler)
 phone.start()
+lights.start()
 
 print("Phonos ready. Zones:")
 for i, zone in enumerate(cfg.rooms):
@@ -91,5 +105,3 @@ for i, zone in enumerate(cfg.rooms):
 print("\nPresets:")
 for i, preset in enumerate(cfg.uris):
     print(str(i+1) + ": " + preset.name)
-
-phone.join()

@@ -29,7 +29,6 @@ class Rotary (threading.Thread):
         self.value = 0
         self.callback = cb
         self.stop_thread = False
-        signal.signal(signal.SIGINT, self.sig_handler)
 
     def run(self):
         while (not self.stop_thread):
@@ -62,7 +61,7 @@ class Rotary (threading.Thread):
         else:
             self.hook_cb(False)
 
-    def sig_handler(self, signal, frame):
-        print("Caught SIGINT, exiting...")
+    def stop(self):
         self.stop_thread = True
         GPIO.cleanup()
+
