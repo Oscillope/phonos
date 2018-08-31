@@ -2,6 +2,7 @@ import rotary
 import soco
 import time
 import leds
+import signal
 
 try:
     import config as cfg

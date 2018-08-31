@@ -1,6 +1,5 @@
 import threading
 from time import sleep
-import signal
 try:
     import RPi.GPIO as GPIO
     emulator = False
