@@ -105,6 +105,7 @@ lights = leds.Leds(18, 5)
 signal.signal(signal.SIGINT, sig_handler)
 phone.start()
 lights.start()
+lights.startOff()
 
 print("Phonos ready. Zones:")
 for i, zone in enumerate(cfg.rooms):
