@@ -1,4 +1,8 @@
-from rpi_ws281x import *
+try:
+    from rpi_ws281x import *
+    emulator = False
+except ImportError:
+    emulator = True
 import threading
 import math
 from time import sleep
@@ -57,8 +61,11 @@ def rgb2hsv(r, g, b):
 class Leds (threading.Thread):
     def __init__(self, pin, count):
         threading.Thread.__init__(self)
-        self.strip = Adafruit_NeoPixel(count, pin)
-        self.stop_thread = False
+        if not emulator:
+            self.strip = Adafruit_NeoPixel(count, pin)
+            self.stop_thread = False
+        else:
+            self.stop_thread = True
         self.num_steps = 16
         self.state = "off"
         self.color = (0, 183, 255)
@@ -69,7 +76,8 @@ class Leds (threading.Thread):
             "playing" : self.statePlay,
             "error" : self.stateErr,
         }
-        self.strip.begin()
+        if not emulator:
+            self.strip.begin()
 
     def run(self):
         while (not self.stop_thread):

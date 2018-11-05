@@ -12,8 +12,8 @@ class Rotary (threading.Thread):
         self.latch = latch
         self.count = count
         self.hook = hook
-        GPIO.setmode(GPIO.BOARD)
         if not emulator:
+            GPIO.setmode(GPIO.BOARD)
             GPIO.setup(self.latch, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.setup(self.count, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.setup(self.hook, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -53,7 +53,8 @@ class Rotary (threading.Thread):
                 self._counter = 0
             sleep(0.1)
         print("Exiting rotary phone thread")
-        GPIO.cleanup()
+        if not emulator:
+            GPIO.cleanup()
 
     def _hook_cb(self, pin):
         if (GPIO.input(pin)):

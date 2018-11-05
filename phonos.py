@@ -94,7 +94,7 @@ def hook_cb(value):
         print("Pause, reset state")
 
 def sig_handler(signal, frame):
-    print("Caught SIGINT, exiting...")
+    print("Caught signal " + str(signal) + ", exiting...")
     phone.stop_thread = True
     phone.join()
     lights.kill()
@@ -104,6 +104,7 @@ phone = rotary.Rotary(18, 16, 22, cb, hook_cb)
 lights = leds.Leds(18, 5)
 
 signal.signal(signal.SIGINT, sig_handler)
+signal.signal(signal.SIGTERM, sig_handler)
 phone.start()
 lights.start()
 lights.startOff()
