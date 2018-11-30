@@ -1,6 +1,5 @@
 import threading
 from time import sleep
-import signal
 try:
     import RPi.GPIO as GPIO
     emulator = False
@@ -13,8 +12,8 @@ class Rotary (threading.Thread):
         self.latch = latch
         self.count = count
         self.hook = hook
-        GPIO.setmode(GPIO.BOARD)
         if not emulator:
+            GPIO.setmode(GPIO.BOARD)
             GPIO.setup(self.latch, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.setup(self.count, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.setup(self.hook, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -29,7 +28,6 @@ class Rotary (threading.Thread):
         self.value = 0
         self.callback = cb
         self.stop_thread = False
-        signal.signal(signal.SIGINT, self.sig_handler)
 
     def run(self):
         while (not self.stop_thread):
@@ -55,6 +53,8 @@ class Rotary (threading.Thread):
                 self._counter = 0
             sleep(0.1)
         print("Exiting rotary phone thread")
+        if not emulator:
+            GPIO.cleanup()
 
     def _hook_cb(self, pin):
         if (GPIO.input(pin)):
@@ -62,7 +62,3 @@ class Rotary (threading.Thread):
         else:
             self.hook_cb(False)
 
-    def sig_handler(self, signal, frame):
-        print("Caught SIGINT, exiting...")
-        self.stop_thread = True
-        GPIO.cleanup()
